@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath fill='%232563eb' d='M252.16,117.49l-112-48a15.89,15.89,0,0,0-12.32,0l-112,48A16,16,0,0,0,16,132.17V176a8,8,0,0,0,16,0V141l29,12.42A16,16,0,0,0,64,168v32a32,32,0,0,0,32,32h64a32,32,0,0,0,32-32V168a16,16,0,0,0,2.94-14.54l29.22-12.52V176a8,8,0,0,0,16,0V132.17A16,16,0,0,0,252.16,117.49ZM176,200a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16V172.58l41.84,17.93a15.89,15.89,0,0,0,12.32,0L176,172.58Zm-48-26.6-96.65-41.4L128,90.6l96.65,41.4Z'/%3E%3C/svg%3E">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            /* Light Theme - Premium SaaS */
+            --bg-body: #f4f7fb;
+            --bg-radial: radial-gradient(circle at 50% 0%, #ffffff 0%, #f4f7fb 60%);
+            --bg-surface: #ffffff;
+            --bg-surface-hover: #f8fafc;
+            --bg-input: #f1f5f9;
+            
+            --border-subtle: rgba(15, 23, 42, 0.06);
+            --border-focus: #3b82f6;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            
+            --accent-primary: #2563eb; 
+            --accent-hover: #1d4ed8;
+            --accent-light: #eff6ff;
+            --accent-text: #ffffff;
+            
+            --status-success-bg: #ecfdf5;
+            --status-success-text: #059669;
+            --status-danger-bg: #fef2f2;
+            --status-danger-text: #dc2626;
+            --status-warning-bg: #fffbeb;
+            --status-warning-text: #d97706;
+            
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.04), 0 4px 6px rgba(15, 23, 42, 0.02);
+            --shadow-hover: 0 20px 40px rgba(15, 23, 42, 0.08);
+            --shadow-dropdown: 0 20px 40px rgba(15, 23, 42, 0.12);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+            
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --skeleton-base: #e2e8f0;
+            --skeleton-shine: rgba(255,255,255,0.8);
+        }
+
+        body.dark {
+            /* Dark Theme - Sleek Obsidian */
+            --bg-body: #0b0f19;
+            --bg-radial: radial-gradient(circle at 50% 0%, #151e32 0%, #0b0f19 60%);
+            --bg-surface: #111827;
+            --bg-surface-hover: #1f2937;
+            --bg-input: #1f2937;
+            
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-focus: #3b82f6;
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #475569;
+            
+            --accent-primary: #3b82f6;
+            --accent-hover: #60a5fa;
+            --accent-light: rgba(59, 130, 246, 0.1);
+            --accent-text: #ffffff;
+            
+            --status-success-bg: rgba(16, 185, 129, 0.1);
+            --status-success-text: #34d399;
+            --status-danger-bg: rgba(239, 68, 68, 0.1);
+            --status-danger-text: #f87171;
+            --status-warning-bg: rgba(245, 158, 11, 0.1);
+            --status-warning-text: #fbbf24;
+            
+            --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.6);
+            --shadow-dropdown: 0 20px 40px rgba(0, 0, 0, 0.8);
+            
+            --glass-bg: rgba(17, 24, 39, 0.85);
+            --skeleton-base: #1f2937;
+            --skeleton-shine: rgba(255,255,255,0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            background-image: var(--bg-radial);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            transition: background-color 0.4s ease, color 0.4s ease;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* --- LAYOUT FIXES --- */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            padding: 16px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 40px; }
+
+        h1 { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 12px; letter-spacing: -0.03em; }
+        h1 i { color: var(--accent-primary); font-size: 1.5rem; }
+
+        /* Segmented Navigation */
+        .nav-tabs {
+            display: inline-flex;
+            background: var(--bg-surface);
+            padding: 6px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 40px;
+            gap: 4px;
+        }
+
+        .nav-tab {
+            padding: 10px 24px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover { color: var(--text-primary); }
+        .nav-tab.active { background: var(--accent-light); color: var(--accent-primary); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            transition: box-shadow 0.3s ease; /* Removed translateY */
+        }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .card h2 { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 12px; letter-spacing: -0.02em; }
+
+        /* Metric Cards */
+        .status-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .status-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            box-shadow: var(--shadow-card);
+            transition: box-shadow 0.3s ease; /* Removed translateY */
+        }
+        .status-card:hover { box-shadow: var(--shadow-hover); border-color: var(--border-focus); }
+
+        .status-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .status-card.active .status-icon { background: var(--status-success-bg); color: var(--status-success-text); }
+        .status-card.inactive .status-icon { background: var(--status-danger-bg); color: var(--status-danger-text); }
+        .status-card.graduated .status-icon { background: var(--status-warning-bg); color: var(--status-warning-text); }
+
+        .status-info { display: flex; flex-direction: column; gap: 4px; }
+        .status-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-count { font-size: 2rem; font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: -0.03em; }
+
+        /* Toolbar */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 20px; }
+        .search-wrapper { position: relative; width: 360px; }
+        .search-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); font-size: 1.2rem; }
+        .search-box { width: 100%; padding: 14px 16px 14px 48px; border-radius: var(--radius-md); background: var(--bg-surface); border: 1px solid var(--border-subtle); box-shadow: var(--shadow-sm); }
+
+        /* Form Inputs */
+        .form-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+        input, select {
+            width: 100%; padding: 14px 16px; background: var(--bg-input); border: 2px solid transparent;
+            border-radius: var(--radius-md); font-size: 0.95rem; color: var(--text-primary); transition: all 0.3s ease; font-family: inherit;
+        }
+        input::placeholder { color: var(--text-tertiary); font-weight: 500; }
+        input:focus, select:focus { outline: none; background: var(--bg-surface); border-color: var(--accent-primary); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1); }
+
+        /* Buttons */
+        .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn {
+            padding: 12px 24px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 0.9rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit;
+            transition: all 0.3s ease; border: 1px solid transparent;
+        }
+        .btn-outline { background: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-secondary); box-shadow: var(--shadow-sm); }
+        .btn-outline:hover { border-color: var(--text-primary); color: var(--text-primary); box-shadow: var(--shadow-hover); }
+        
+        .btn-primary { background: var(--accent-primary); color: var(--accent-text); box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); }
+        .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); } /* Removed translateY */
+
+        .form-actions { grid-column: 1 / -1; display: flex; gap: 16px; margin-top: 16px; }
+
+        /* Tables & Sorting */
+        .table-container { overflow-x: auto; margin: 0 -40px; padding: 0 40px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 20px 16px; text-align: left; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; white-space: nowrap; }
+        th { 
+            font-weight: 600; color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; 
+            cursor: pointer; user-select: none; transition: color 0.2s;
+        }
+        th:hover { color: var(--text-primary); }
+        th.sortable::after { content: '↕'; margin-left: 6px; opacity: 0.3; }
+        th.sort-asc::after { content: '↑'; opacity: 1; color: var(--accent-primary); }
+        th.sort-desc::after { content: '↓'; opacity: 1; color: var(--accent-primary); }
+
+        tbody tr { transition: background-color 0.2s; }
+        tbody tr:hover { background: var(--bg-surface-hover); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        /* Skeleton Loader */
+        .skeleton-box {
+            display: inline-block; height: 18px; width: 80%; border-radius: 4px;
+            background-color: var(--skeleton-base); position: relative; overflow: hidden;
+        }
+        .skeleton-box::after {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, var(--skeleton-shine) 20%, rgba(255,255,255,0) 60%);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center; padding: 60px 20px; color: var(--text-tertiary);
+            background: var(--bg-input); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);
+        }
+        .empty-state i { font-size: 48px; opacity: 0.5; margin-bottom: 16px; display: block; }
+        .empty-state p { font-weight: 500; font-size: 1.1rem; color: var(--text-secondary); }
+        .empty-state span { display: block; font-size: 0.9rem; margin-top: 8px; }
+
+        /* Badges & Actions */
+        .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+        .status-active { background: var(--status-success-bg); color: var(--status-success-text); }
+        .status-inactive { background: var(--status-danger-bg); color: var(--status-danger-text); }
+        .status-graduated { background: var(--status-warning-bg); color: var(--status-warning-text); }
+
+        .action-btn { background: var(--bg-input); border: none; padding: 8px; border-radius: 8px; cursor: pointer; color: var(--text-secondary); transition: all 0.2s; margin-left: 4px; }
+        .action-btn:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
+        .edit-btn:hover { color: var(--accent-primary); background: var(--accent-light); }
+        .delete-btn:hover { color: var(--status-danger-text); background: var(--status-danger-bg); }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 20px; }
+        .modal-content { background: var(--bg-surface); margin: 4vh auto; width: 100%; max-width: 600px; border-radius: var(--radius-lg); box-shadow: var(--shadow-dropdown); border: 1px solid var(--border-subtle); animation: modalScale 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
+        @keyframes modalScale { from { transform: scale(0.95) translateY(20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        .modal-header { padding: 32px 40px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); }
+        .modal-body { padding: 40px; max-height: 70vh; overflow-y: auto; }
+        .close { color: var(--text-tertiary); cursor: pointer; transition: color 0.2s; font-size: 1.5rem; }
+        .close:hover { color: var(--text-primary); }
+        .profile-header { text-align: center; margin-bottom: 40px; }
+        .avatar-lg { width: 96px; height: 96px; background: var(--accent-light); color: var(--accent-primary); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin-bottom: 20px; }
+        .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .profile-item { display: flex; flex-direction: column; gap: 8px; }
+        .profile-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+        .profile-value { font-size: 1rem; color: var(--text-primary); font-weight: 500; }
+
+        /* Report Card */
+        .report-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 48px; box-shadow: var(--shadow-card); }
+        .report-header { text-align: center; margin-bottom: 48px; }
+        .report-header h2 { justify-content: center; font-size: 1.75rem; letter-spacing: -0.03em; }
+        .result-summary { margin-top: 48px; padding: 40px; border-radius: var(--radius-lg); display: flex; justify-content: space-around; flex-wrap: wrap; gap: 32px; background: var(--bg-input); border: 1px solid var(--border-subtle); }
+        .result-summary p { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .result-summary span { font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; letter-spacing: 0.5px; }
+        .result-summary strong { font-size: 2rem; color: var(--text-primary); line-height: 1; font-weight: 800; }
+
+        /* Enhanced Toast with Progress */
+        #toast {
+            position: fixed; bottom: 40px; right: 40px; z-index: 1000;
+            background: var(--bg-surface); border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md); padding: 16px 24px;
+            box-shadow: var(--shadow-dropdown); display: none; flex-direction: column; gap: 8px;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+        }
+        .toast-content { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 0.95rem; }
+        .toast-progress { height: 3px; background: var(--bg-input); width: 100%; border-radius: 2px; overflow: hidden; }
+        .toast-bar { height: 100%; width: 100%; transform-origin: left; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes shrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+        /* Dashboard Chart Container */
+        .chart-container { height: 300px; width: 100%; margin: 0 auto 40px auto; position: relative; }
+
+        @media (max-width: 768px) {
+            .app-header { padding: 16px 20px; }
+            .main-container { padding: 20px; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .search-wrapper { width: 100%; }
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1><i class="ph-fill ph-graduation-cap"></i> Student Management System</h1>
+        <button class="btn btn-outline" onclick="toggleDarkMode()" id="darkModeToggle" style="padding: 10px 16px;">
+            <i class="ph-bold ph-moon"></i> Dark Mode
+        </button>
+    </header>
+
+    <main class="main-container">
+        <div id="toast">
+            <div class="toast-content" id="toastMessage"></div>
+            <div class="toast-progress"><div class="toast-bar" id="toastBar"></div></div>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('students')"><i class="ph-bold ph-users"></i> Directory</button>
+            <button class="nav-tab" onclick="showTab('marks')"><i class="ph-bold ph-exam"></i> Examinations</button>
+            <button class="nav-tab" onclick="showTab('results')"><i class="ph-bold ph-chart-bar"></i> Analytics & Reports</button>
+        </nav>
+
+        <div id="studentsTab" class="tab-content active">
+            <div class="status-summary">
+                <div class="status-card active">
+                    <div class="status-info"><span class="status-label">Active Students</span><span class="status-count" id="activeCount">0</span></div>
+                    <div class="status-icon" style="margin-left:auto"><i class="ph-fill ph-check-circle"></i></div>
+                </div>
+                <div class="status-card inactive">
+                    <div class="status-info"><span class="status-label">Inactive Students</span><span class="status-count" id="inactiveCount">0</span></div>
+                    <div class="status-icon" style="margin-left:auto"><i class="ph-fill ph-x-circle"></i></div>
+                </div>
+                <div class="status-card graduated">
+                    <div class="status-info"><span class="status-label">Graduated</span><span class="status-count" id="graduatedCount">0</span></div>
+                    <div class="status-icon" style="margin-left:auto"><i class="ph-fill ph-certificate"></i></div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <i class="ph-bold ph-magnifying-glass"></i>
+                    <input type="text" id="searchInput" class="search-box" placeholder="Search by name, email, or roll no..." onkeyup="searchStudents()">
+                </div>
+                <div class="btn-group">
+                    <button onclick="downloadCSV()" class="btn btn-outline"><i class="ph-bold ph-download-simple"></i> CSV</button>
+                    <button onclick="exportToPDF()" class="btn btn-outline"><i class="ph-bold ph-file-pdf"></i> PDF</button>
+                    <button onclick="batchPrintIDCards()" class="btn btn-outline"><i class="ph-bold ph-identification-card"></i> ID Cards</button>
+                    <button onclick="window.print()" class="btn btn-outline"><i class="ph-bold ph-printer"></i> Print</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="formTitle"><i class="ph-fill ph-user-plus" style="color:var(--accent-primary)"></i> Register Student</h2>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="name" placeholder="Full Name">
+                    <input type="email" id="email" placeholder="Institutional Email">
+                    <input type="tel" id="phone" placeholder="Contact Number">
+                    <input type="text" id="rollNumber" placeholder="Registration/Roll No">
+                    <input type="text" id="studentClass" placeholder="Department">
+                    <input type="text" id="course" placeholder="Degree Program">
+                    <input type="number" id="age" placeholder="Age">
+                    <select id="status">
+                        <option value="ACTIVE">Status: Active</option>
+                        <option value="INACTIVE">Status: Inactive</option>
+                        <option value="GRADUATED">Status: Graduated</option>
+                    </select>
+                    <input type="text" id="fatherName" placeholder="Father's Name">
+                    <input type="text" id="motherName" placeholder="Mother's Name">
+                    <input type="tel" id="parentPhone" placeholder="Guardian's Contact">
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="saveStudent()" id="saveBtn">Save Record</button>
+                        <button class="btn btn-outline" onclick="cancelEdit()" id="cancelBtn" style="display:none;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph-fill ph-list-dashes" style="color:var(--accent-primary)"></i> Student Master List</h2>
+                    <span id="totalCount" style="color:var(--text-secondary); font-size:0.95rem; font-weight:600; background:var(--bg-input); padding:6px 12px; border-radius:8px;">Total: 0</span>
+                </div>
+                <div class="table-container">
+                    <table id="studentTable">
+                        <thead>
+                            <tr>
+                                <th class="sortable" onclick="sortTable('id', 'student')">ID</th>
+                                <th class="sortable" onclick="sortTable('rollNumber', 'student')">Reg No</th>
+                                <th class="sortable" onclick="sortTable('name', 'student')">Full Name</th>
+                                <th class="sortable" onclick="sortTable('email', 'student')">Email</th>
+                                <th class="sortable" onclick="sortTable('course', 'student')">Program</th>
+                                <th class="sortable" onclick="sortTable('status', 'student')">Status</th>
+                                <th style="text-align:right; cursor:default;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+
+        <div id="marksTab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph-fill ph-calendar-plus" style="color:var(--accent-primary)"></i> Define Examination</h2>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="examName" placeholder="Examination Title (e.g., Final Semester)">
+                    <input type="date" id="examDate">
+                    <input type="text" id="examSemester" placeholder="Semester Context">
+                    <input type="text" id="examYear" placeholder="Academic Year">
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="addExam()">Create Examination Term</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph-fill ph-exam" style="color:var(--accent-primary)"></i> Input Academic Scores</h2>
+                </div>
+                <div class="form-group">
+                    <select id="selectExam"><option value="">Select Examination Term</option></select>
+                    <select id="selectStudent"><option value="">Select Enrolled Student</option></select>
+                    <input type="text" id="subject" placeholder="Subject / Module Code">
+                    <input type="number" id="marksObtained" placeholder="Marks Achieved">
+                    <input type="number" id="totalMarks" placeholder="Maximum Marks">
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="addMarks()">Commit Score Record</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph-fill ph-list-numbers" style="color:var(--accent-primary)"></i> Grades Ledger</h2>
+                </div>
+                <div class="table-container">
+                    <table id="marksTable">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Examination</th>
+                                <th>Module</th>
+                                <th>Score</th>
+                                <th>Grade</th>
+                                <th style="text-align:right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marksTableBody">
+                           </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsTab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph-fill ph-chart-donut" style="color:var(--accent-primary)"></i> System Demographics</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="ph-fill ph-file-text" style="color:var(--accent-primary)"></i> Academic Transcript Generation</h2>
+                </div>
+                <div class="form-group" style="grid-template-columns: 1fr 1fr;">
+                    <select id="resultExam" onchange="generateResult()"><option value="">Target Examination</option></select>
+                    <select id="resultStudent" onchange="generateResult()"><option value="">Target Student</option></select>
+                </div>
+                <div id="reportCardContainer" style="margin-top:40px;">
+                    <div class="empty-state">
+                        <i class="ph-duotone ph-file-dashed"></i>
+                        <p>No Parameters Selected</p>
+                        <span style="color:var(--text-tertiary)">Select an examination and a student from the dropdowns above to generate a formal transcript.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const STUDENT_API = 'http://localhost:8080/api/students';
+        let allStudents = [];
+        let allExams = [];
+        let allMarks = [];
+        let currentEditId = null;
+        let filteredStudents = [];
+        let currentPage = 1, pageSize = 10;
+        
+        // Sorting State
+        let currentSortColumn = 'id';
+        let isAscending = true;
+        
+        // Chart Instance
+        let dashboardChart = null;
+
+        // Enhanced Toast Function
+        function showMessage(msg, type) {
+            const toast = document.getElementById('toast');
+            const msgDiv = document.getElementById('toastMessage');
+            const bar = document.getElementById('toastBar');
+            
+            const color = type === 'success' ? 'var(--status-success-text)' : 'var(--status-danger-text)';
+            const icon = type === 'success' ? '<i class="ph-fill ph-check-circle" style="font-size:1.2rem"></i>' : '<i class="ph-fill ph-warning-circle" style="font-size:1.2rem"></i>';
+            
+            msgDiv.innerHTML = `${icon} <span style="color:var(--text-primary)">${msg}</span>`;
+            msgDiv.style.color = color;
+            toast.style.borderLeft = `4px solid ${color}`;
+            bar.style.backgroundColor = color;
+            
+            // Reset animation
+            bar.style.animation = 'none';
+            void bar.offsetWidth; // trigger reflow
+            bar.style.animation = 'shrink 3s linear forwards';
+            
+            toast.style.display = 'flex';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // Skeleton UI Loaders
+        function renderSkeleton(tbodyId, columns) {
+            const tbody = document.getElementById(tbodyId);
+            if(tbody) {
+                tbody.innerHTML = Array(5).fill(`<tr>${Array(columns).fill('<td><div class="skeleton-box"></div></td>').join('')}</tr>`).join('');
+            }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+            event.target.closest('.nav-tab').classList.add('active');
+            if (tab === 'marks') loadMarksData();
+            if (tab === 'results') {
+                loadMarksData();
+                renderChart(); // Draw chart when tab is opened
+            }
+        }
+
+        // ============ STUDENT FUNCTIONS ============
+        async function loadStudents() {
+            renderSkeleton('studentTableBody', 7);
+            try {
+                const res = await fetch(STUDENT_API);
+                allStudents = await res.json();
+                filteredStudents = [...allStudents];
+                sortData(); // Apply default sorting
+                applyPagination();
+                updateStatusCounts();
+                populateStudentSelects();
+                if(dashboardChart) renderChart();
+            } catch(e) { 
+                document.getElementById('studentTableBody').innerHTML = '<tr><td colspan="7" class="empty-state"><i class="ph-duotone ph-warning-circle"></i><p>Connection Error</p><span>Could not connect to the database server.</span></td></tr>';
+                console.error(e); 
+            }
+        }
+
+        function updateStatusCounts() {
+            document.getElementById('activeCount').textContent = allStudents.filter(s => s.status === 'ACTIVE').length;
+            document.getElementById('inactiveCount').textContent = allStudents.filter(s => s.status === 'INACTIVE').length;
+            document.getElementById('graduatedCount').textContent = allStudents.filter(s => s.status === 'GRADUATED').length;
+        }
+
+        // Chart.js Visualization (Enhanced)
+        function renderChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const active = allStudents.filter(s => s.status === 'ACTIVE').length;
+            const inactive = allStudents.filter(s => s.status === 'INACTIVE').length;
+            const graduated = allStudents.filter(s => s.status === 'GRADUATED').length;
+            const total = active + inactive + graduated;
+            
+            // Get CSS variable colors for seamless dark/light mode switching
+            const style = getComputedStyle(document.body);
+            const colorActive = style.getPropertyValue('--status-success-text').trim();
+            const colorInactive = style.getPropertyValue('--status-danger-text').trim();
+            const colorGrad = style.getPropertyValue('--status-warning-text').trim();
+            const colorText = style.getPropertyValue('--text-primary').trim();
+            const colorSecondary = style.getPropertyValue('--text-secondary').trim();
+            const colorEmpty = style.getPropertyValue('--bg-input').trim();
+            const colorSurface = style.getPropertyValue('--bg-surface').trim();
+            const colorBorder = style.getPropertyValue('--border-subtle').trim();
+
+            if(dashboardChart) dashboardChart.destroy();
+
+            // Custom plugin to draw total count in the center
+            const centerTextPlugin = {
+                id: 'centerText',
+                beforeDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    ctx.restore();
+                    
+                    // Grab the exact center coordinates of the doughnut ring, ignoring the legend offset
+                    const meta = chart.getDatasetMeta(0);
+                    if (!meta.data || !meta.data.length) return;
+                    
+                    const centerX = meta.data[0].x;
+                    const centerY = meta.data[0].y;
+                    
+                    // Main Total Number
+                    ctx.font = "800 2.5rem Inter";
+                    ctx.textBaseline = "middle";
+                    ctx.textAlign = "center"; // Automatically centers the text perfectly
+                    ctx.fillStyle = colorText;
+                    const text = total === 0 ? "0" : total.toString();
+                    ctx.fillText(text, centerX, centerY - 12);
+                    
+                    // Subtitle
+                    ctx.font = "600 0.85rem Inter";
+                    ctx.fillStyle = colorSecondary;
+                    const subText = "Total Students";
+                    ctx.fillText(subText, centerX, centerY + 20);
+                    
+                    ctx.save();
+                }
+            };
+
+            const hasData = total > 0;
+
+            dashboardChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: hasData ? ['Active', 'Inactive', 'Graduated'] : ['No Data'],
+                    datasets: [{
+                        data: hasData ? [active, inactive, graduated] : [1],
+                        backgroundColor: hasData ? [colorActive, colorInactive, colorGrad] : [colorEmpty],
+                        borderWidth: 0,
+                        hoverOffset: hasData ? 6 : 0,
+                        borderRadius: hasData ? 6 : 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%', 
+                    layout: { padding: 20 },
+                    plugins: {
+                        legend: { 
+                            display: hasData,
+                            position: 'right', 
+                            labels: { 
+                                color: colorSecondary, 
+                                font: { family: 'Inter', size: 13, weight: '500' },
+                                usePointStyle: true,
+                                padding: 24
+                            } 
+                        },
+                        tooltip: {
+                            enabled: hasData,
+                            backgroundColor: colorSurface,
+                            titleColor: colorText,
+                            bodyColor: colorSecondary,
+                            borderColor: colorBorder,
+                            borderWidth: 1,
+                            padding: 16,
+                            boxPadding: 8,
+                            cornerRadius: 8,
+                            titleFont: { family: 'Inter', size: 14, weight: '600' },
+                            bodyFont: { family: 'Inter', size: 13, weight: '500' },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) label += ': ';
+                                    const val = context.raw;
+                                    const percentage = ((val / total) * 100).toFixed(1) + '%';
+                                    return label + val + ' students (' + percentage + ')';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [centerTextPlugin]
+            });
+        }
+
+        // Sorting Logic
+        function sortTable(column, type) {
+            if (currentSortColumn === column) {
+                isAscending = !isAscending;
+            } else {
+                currentSortColumn = column;
+                isAscending = true;
+            }
+            
+            // Update Headers Visuals
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if(th.getAttribute('onclick').includes(column)) {
+                    th.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+                }
+            });
+
+            sortData();
+            if(type === 'student') applyPagination();
+        }
+
+        function sortData() {
+            filteredStudents.sort((a, b) => {
+                let valA = a[currentSortColumn] || '';
+                let valB = b[currentSortColumn] || '';
+                if(typeof valA === 'string') valA = valA.toLowerCase();
+                if(typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return isAscending ? -1 : 1;
+                if (valA > valB) return isAscending ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function populateStudentSelects() {
+            const studentSelect = document.getElementById('selectStudent');
+            const resultStudent = document.getElementById('resultStudent');
+            const options = '<option value="">Select Student</option>' + allStudents.map(s => `<option value="${s.id}">${s.name} (${s.rollNumber || 'N/A'})</option>`).join('');
+            if (studentSelect) studentSelect.innerHTML = options;
+            if (resultStudent) resultStudent.innerHTML = options;
+        }
+
+        function applyPagination() {
+            const start = (currentPage - 1) * pageSize;
+            const paginated = filteredStudents.slice(start, start + pageSize);
+            displayStudents(paginated);
+            updatePaginationUI();
+        }
+
+        function displayStudents(students) {
+            const tbody = document.getElementById('studentTableBody');
+            
+            // High-Fidelity Empty State
+            if (!students.length) { 
+                tbody.innerHTML = `<tr><td colspan="7">
+                    <div class="empty-state">
+                        <i class="ph-duotone ph-magnifying-glass"></i>
+                        <p>No Records Found</p>
+                        <span>We couldn't find any students matching your current filters or search query.</span>
+                    </div>
+                </td></tr>`; 
+                return; 
+            }
+            
+            tbody.innerHTML = students.map(s => `<tr>
+                <td style="color:var(--text-tertiary); font-weight:500;">${s.id}</td>
+                <td style="font-family:monospace; color:var(--text-secondary); font-size:0.9rem;">${s.rollNumber || '-'}</td>
+                <td>
+                    <div style="font-weight:600; cursor:pointer; color:var(--text-primary); transition:color 0.2s;" onclick='showProfile(${JSON.stringify(s).replace(/'/g, "&#39;")})' onmouseover="this.style.color='var(--accent-primary)'" onmouseout="this.style.color='var(--text-primary)'">
+                        ${escapeHtml(s.name)}
+                    </div>
+                </td>
+                <td style="color:var(--text-secondary);">${escapeHtml(s.email)}</td>
+                <td style="font-weight:500;">${escapeHtml(s.course)}</td>
+                <td><span class="status-badge status-${s.status === 'ACTIVE' ? 'active' : (s.status === 'INACTIVE' ? 'inactive' : 'graduated')}">
+                    ${s.status || 'ACTIVE'}
+                </span></td>
+                <td style="text-align:right;">
+                    <button class="action-btn edit-btn" title="Edit Record" onclick="editStudent(${s.id})"><i class="ph-bold ph-pencil-simple"></i></button>
+                    <button class="action-btn delete-btn" title="Delete Record" onclick="deleteStudent(${s.id})"><i class="ph-bold ph-trash"></i></button>
+                </td>
+            </tr>`).join('');
+        }
+
+        function updatePaginationUI() {
+            const totalPages = Math.ceil(filteredStudents.length / pageSize);
+            document.getElementById('totalCount').innerHTML = `Total: ${filteredStudents.length}`;
+            const paginationDiv = document.getElementById('pagination');
+            if (paginationDiv) {
+                paginationDiv.innerHTML = `
+                    <div class="page-info">Showing page ${currentPage} of ${totalPages || 1}</div>
+                    <div class="pagination-controls">
+                        <button class="btn btn-outline" style="padding:8px 12px;" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}><i class="ph-bold ph-caret-double-left"></i></button>
+                        <button class="btn btn-outline" style="padding:8px 12px;" onclick="changePage(${currentPage-1})" ${currentPage === 1 ? 'disabled' : ''}><i class="ph-bold ph-caret-left"></i></button>
+                        <button class="btn btn-outline" style="padding:8px 12px;" onclick="changePage(${currentPage+1})" ${currentPage === totalPages || !totalPages ? 'disabled' : ''}><i class="ph-bold ph-caret-right"></i></button>
+                        <button class="btn btn-outline" style="padding:8px 12px;" onclick="changePage(${totalPages})" ${currentPage === totalPages || !totalPages ? 'disabled' : ''}><i class="ph-bold ph-caret-double-right"></i></button>
+                        <select class="btn btn-outline" style="padding:8px 12px; width:auto;" onchange="changePageSize()">
+                            <option value="5" ${pageSize===5?'selected':''}>5 / page</option>
+                            <option value="10" ${pageSize===10?'selected':''}>10 / page</option>
+                            <option value="20" ${pageSize===20?'selected':''}>20 / page</option>
+                        </select>
+                    </div>
+                `;
+            }
+        }
+
+        function changePage(page) { currentPage = page; applyPagination(); }
+        function changePageSize() { pageSize = parseInt(event.target.value); currentPage = 1; applyPagination(); }
+        function searchStudents() { filterStudents(); applyPagination(); }
+        function filterStudents() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredStudents = term ? allStudents.filter(s => s.name.toLowerCase().includes(term) || s.email.toLowerCase().includes(term) || (s.rollNumber && s.rollNumber.includes(term))) : [...allStudents];
+            sortData(); // Keep sorted while searching
+        }
+
+        function showProfile(student) {
+            const modalHtml = `
+                <div class="modal" id="profileModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 style="font-size:1.2rem; font-weight:700;"><i class="ph-fill ph-identification-card" style="margin-right:8px; color:var(--accent-primary);"></i> Identity Dossier</h2>
+                            <span class="close" onclick="closeModal()"><i class="ph-bold ph-x"></i></span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="profile-header">
+                                <div class="avatar-lg">${getInitials(student.name)}</div>
+                                <h3 style="font-size:1.5rem; font-weight:800; color:var(--text-primary); margin-bottom:8px; letter-spacing:-0.02em;">${escapeHtml(student.name)}</h3>
+                                <div style="font-family:monospace; color:var(--text-secondary); background:var(--bg-input); padding:6px 16px; border-radius:20px; display:inline-block; font-size:0.9rem; font-weight:600;">${student.rollNumber || 'Unassigned'}</div>
+                            </div>
+                            
+                            <div class="profile-grid">
+                                <div class="profile-item"><span class="profile-label">Email Context</span><span class="profile-value">${escapeHtml(student.email)}</span></div>
+                                <div class="profile-item"><span class="profile-label">Contact Node</span><span class="profile-value">${student.phone || '-'}</span></div>
+                                <div class="profile-item"><span class="profile-label">Department</span><span class="profile-value">${student.studentClass || '-'}</span></div>
+                                <div class="profile-item"><span class="profile-label">Program Degree</span><span class="profile-value">${escapeHtml(student.course)}</span></div>
+                                <div class="profile-item"><span class="profile-label">Age Index</span><span class="profile-value">${student.age}</span></div>
+                                <div class="profile-item"><span class="profile-label">Current State</span><span class="profile-value" style="color:var(--accent-primary); font-weight:700;">${student.status || 'ACTIVE'}</span></div>
+                                <div class="profile-item"><span class="profile-label">Guardian 1</span><span class="profile-value">${student.fatherName || '-'}</span></div>
+                                <div class="profile-item"><span class="profile-label">Guardian 2</span><span class="profile-value">${student.motherName || '-'}</span></div>
+                                <div class="profile-item" style="grid-column: 1 / -1;"><span class="profile-label">Emergency Protocol Contact</span><span class="profile-value">${student.parentPhone || '-'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            document.getElementById('profileModal').style.display = 'block';
+        }
+
+        function closeModal() { const modal = document.getElementById('profileModal'); if(modal) modal.remove(); }
+        function getInitials(name) { return name ? name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) : '?'; }
+
+        async function saveStudent() {
+            const student = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                rollNumber: document.getElementById('rollNumber').value.trim(),
+                studentClass: document.getElementById('studentClass').value.trim(),
+                fatherName: document.getElementById('fatherName').value.trim(),
+                motherName: document.getElementById('motherName').value.trim(),
+                parentPhone: document.getElementById('parentPhone').value.trim(),
+                course: document.getElementById('course').value.trim(),
+                age: parseInt(document.getElementById('age').value),
+                status: document.getElementById('status').value
+            };
+            if (!student.name || !student.email || !student.course || !student.age) { showMessage('Core fields mandatory for registration.', 'error'); return; }
+            try {
+                if (currentEditId) {
+                    await fetch(`${STUDENT_API}/${currentEditId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(student) });
+                    showMessage('Record updated successfully.', 'success');
+                    cancelEdit();
+                } else {
+                    await fetch(STUDENT_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(student) });
+                    showMessage('Entity registered successfully.', 'success');
+                    clearForm();
+                }
+                await loadStudents();
+            } catch(e) { showMessage(e.message, 'error'); }
+        }
+
+        function editStudent(id) {
+            const s = allStudents.find(s => s.id === id);
+            document.getElementById('name').value = s.name;
+            document.getElementById('email').value = s.email;
+            document.getElementById('phone').value = s.phone || '';
+            document.getElementById('rollNumber').value = s.rollNumber || '';
+            document.getElementById('studentClass').value = s.studentClass || '';
+            document.getElementById('fatherName').value = s.fatherName || '';
+            document.getElementById('motherName').value = s.motherName || '';
+            document.getElementById('parentPhone').value = s.parentPhone || '';
+            document.getElementById('course').value = s.course;
+            document.getElementById('age').value = s.age;
+            document.getElementById('status').value = s.status || 'ACTIVE';
+            currentEditId = id;
+            document.getElementById('formTitle').innerHTML = '<i class="ph-fill ph-pencil-simple" style="color:var(--accent-primary)"></i> Modify Entity Record';
+            document.getElementById('saveBtn').innerHTML = 'Update Record';
+            document.getElementById('cancelBtn').style.display = 'inline-flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEdit() { clearForm(); currentEditId = null; document.getElementById('formTitle').innerHTML = '<i class="ph-fill ph-user-plus" style="color:var(--accent-primary)"></i> Register Student'; document.getElementById('saveBtn').innerHTML = 'Save Record'; document.getElementById('cancelBtn').style.display = 'none'; }
+        function clearForm() { ['name','email','phone','rollNumber','studentClass','fatherName','motherName','parentPhone','course','age'].forEach(id => document.getElementById(id).value = ''); document.getElementById('status').value = 'ACTIVE'; }
+        
+        async function deleteStudent(id) { 
+            if(confirm('Authorize permanent deletion of this record?')){ 
+                try {
+                    await fetch(`${STUDENT_API}/${id}`, { method: 'DELETE' }); 
+                    showMessage('Record purged from database.','success'); 
+                    await loadStudents(); 
+                } catch(e) {
+                    showMessage('Failed to purge record.','error');
+                }
+            } 
+        }
+
+        // ============ MARKS & EXAMS FUNCTIONS ============
+        async function addExam() {
+            const exam = { name: document.getElementById('examName').value, examDate: document.getElementById('examDate').value, semester: document.getElementById('examSemester').value, academicYear: document.getElementById('examYear').value };
+            if(!exam.name) { showMessage('Examination title required.', 'error'); return; }
+            await fetch('http://localhost:8080/api/exams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(exam) });
+            showMessage('Examination term established.', 'success');
+            loadMarksData();
+        }
+
+        async function addMarks() {
+            const obtained = parseInt(document.getElementById('marksObtained').value);
+            const total = parseInt(document.getElementById('totalMarks').value);
+            const percentage = (obtained / total) * 100;
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A+'; else if (percentage >= 80) grade = 'A'; else if (percentage >= 70) grade = 'B+';
+            else if (percentage >= 60) grade = 'B'; else if (percentage >= 50) grade = 'C+'; else if (percentage >= 40) grade = 'C';
+            
+            const marks = {
+                studentId: parseInt(document.getElementById('selectStudent').value),
+                examId: parseInt(document.getElementById('selectExam').value),
+                subject: document.getElementById('subject').value,
+                marksObtained: obtained,
+                totalMarks: total,
+                grade: grade
+            };
+            if(!marks.subject || !marks.marksObtained) { showMessage('Incomplete parameters for score commit.', 'error'); return; }
+            await fetch('http://localhost:8080/api/marks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(marks) });
+            showMessage('Score metric committed.', 'success');
+            loadMarksData();
+        }
+
+        async function loadMarksData() {
+            renderSkeleton('marksTableBody', 6);
+            try {
+                const [studentsRes, examsRes, marksRes] = await Promise.all([
+                    fetch(STUDENT_API),
+                    fetch('http://localhost:8080/api/exams'),
+                    fetch('http://localhost:8080/api/marks')
+                ]);
+                allStudents = await studentsRes.json();
+                allExams = await examsRes.json();
+                allMarks = await marksRes.json();
+                
+                populateExamSelects();
+                populateStudentSelects();
+                displayMarks();
+            } catch(e) { console.error(e); }
+        }
+
+        function populateExamSelects() {
+            const examSelect = document.getElementById('selectExam');
+            const resultExam = document.getElementById('resultExam');
+            const options = '<option value="">Select Examination</option>' + allExams.map(e => `<option value="${e.id}">${e.name} (${e.examDate || ''})</option>`).join('');
+            if (examSelect) examSelect.innerHTML = options;
+            if (resultExam) resultExam.innerHTML = options;
+        }
+
+        function displayMarks() {
+            const tbody = document.getElementById('marksTableBody');
+            if (!tbody) return;
+            if (!allMarks.length) { 
+                tbody.innerHTML = `<tr><td colspan="6">
+                    <div class="empty-state">
+                        <i class="ph-duotone ph-exam"></i>
+                        <p>No Metrics Found</p>
+                        <span>No academic scores have been recorded in the database yet.</span>
+                    </div>
+                </td></tr>`; 
+                return; 
+            }
+            
+            const fixedMarks = allMarks.map(m => ({
+                ...m,
+                studentId: m.studentId || (m.student ? m.student.id : null),
+                examId: m.examId || (m.exam ? m.exam.id : null)
+            }));
+            
+            tbody.innerHTML = fixedMarks.map(m => {
+                const student = allStudents.find(s => s.id === m.studentId);
+                const exam = allExams.find(e => e.id === m.examId);
+                return `<tr>
+                    <td style="font-weight:600;">${student ? student.name : '-'}</td>
+                    <td style="color:var(--text-secondary);">${exam ? exam.name : '-'}</td>
+                    <td style="font-weight:500;">${m.subject}</td>
+                    <td style="font-family:monospace; color:var(--text-secondary);">${m.marksObtained} / ${m.totalMarks}</td>
+                    <td><span style="background:var(--bg-input); padding:6px 12px; border-radius:8px; font-weight:700; color:var(--accent-primary);">${m.grade}</span></td>
+                    <td style="text-align:right;"><button class="action-btn delete-btn" onclick="deleteMarks(${m.id})"><i class="ph-bold ph-trash"></i></button></td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function deleteMarks(id) {
+            if(confirm('Purge this score entry?')) {
+                await fetch(`http://localhost:8080/api/marks/${id}`, { method: 'DELETE' });
+                showMessage('Score entry purged.', 'success');
+                loadMarksData();
+            }
+        }
+
+        // ============ RESULTS FUNCTIONS ============
+        function generateResult() {
+            const examId = document.getElementById('resultExam').value;
+            const studentId = document.getElementById('resultStudent').value;
+            if (!examId || !studentId) { 
+                document.getElementById('reportCardContainer').innerHTML = `
+                    <div class="empty-state">
+                        <i class="ph-duotone ph-file-dashed"></i>
+                        <p>No Parameters Selected</p>
+                        <span>Select an examination and a student from the dropdowns above to generate a formal transcript.</span>
+                    </div>`; 
+                return; 
+            }
+            
+            const student = allStudents.find(s => s.id == studentId);
+            const exam = allExams.find(e => e.id == examId);
+            const studentMarks = allMarks.filter(m => {
+                const mkStudentId = m.studentId || (m.student ? m.student.id : null);
+                const mkExamId = m.examId || (m.exam ? m.exam.id : null);
+                return mkStudentId == studentId && mkExamId == examId;
+            });
+            
+            if (!studentMarks.length) { 
+                document.getElementById('reportCardContainer').innerHTML = `
+                    <div class="empty-state">
+                        <i class="ph-duotone ph-folder-dashed"></i>
+                        <p>No Data Available</p>
+                        <span>There are no score metrics associated with this student for the selected examination.</span>
+                    </div>`; 
+                return; 
+            }
+            
+            let totalObtained = 0, totalMax = 0;
+            studentMarks.forEach(m => { totalObtained += m.marksObtained; totalMax += m.totalMarks; });
+            const percentage = (totalObtained / totalMax) * 100;
+            let overallGrade = 'F';
+            if (percentage >= 90) overallGrade = 'A+'; else if (percentage >= 80) overallGrade = 'A'; else if (percentage >= 70) overallGrade = 'B+';
+            else if (percentage >= 60) overallGrade = 'B'; else if (percentage >= 50) overallGrade = 'C+'; else if (percentage >= 40) overallGrade = 'C';
+            
+            const statusClass = percentage >= 40 ? 'var(--status-success-text)' : 'var(--status-danger-text)';
+            const statusText = percentage >= 40 ? 'VERIFIED PASSED' : 'STATUS FAILED';
+            
+            const reportHtml = `
+                <div class="report-card" id="reportCard">
+                    <div class="report-header">
+                        <h2 style="font-weight:800;">OFFICIAL ACADEMIC TRANSCRIPT</h2>
+                        <p style="color:var(--text-secondary); margin-top:8px; font-family:monospace; text-transform:uppercase; font-weight:600;">${exam.name} &bull; ${exam.academicYear || 'A.Y.'} &bull; ${exam.semester || 'SEM'}</p>
+                    </div>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:48px; background:var(--bg-input); padding:32px; border-radius:var(--radius-md);">
+                        <div style="display:flex; flex-direction:column; gap:8px;"><span style="font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Candidate Name</span><span style="font-size:1.1rem; color:var(--text-primary); font-weight:700;">${escapeHtml(student.name)}</span></div>
+                        <div style="display:flex; flex-direction:column; gap:8px;"><span style="font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Registration ID</span><span style="font-size:1.1rem; color:var(--text-primary); font-family:monospace; font-weight:600;">${student.rollNumber || '-'}</span></div>
+                        <div style="display:flex; flex-direction:column; gap:8px;"><span style="font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Department & Program</span><span style="font-size:1.1rem; color:var(--text-primary); font-weight:600;">${student.studentClass || '-'} | ${escapeHtml(student.course)}</span></div>
+                        <div style="display:flex; flex-direction:column; gap:8px;"><span style="font-size:0.8rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600; letter-spacing:0.5px;">Primary Guardians</span><span style="font-size:1.1rem; color:var(--text-primary); font-weight:600;">${student.fatherName || '-'} & ${student.motherName || '-'}</span></div>
+                    </div>
+                    
+                    <table style="border:1px solid var(--border-subtle); border-radius:var(--radius-md); overflow:hidden; background:var(--bg-surface);">
+                        <thead>
+                            <tr>
+                                <th style="background:var(--bg-input); border-bottom:2px solid var(--border-subtle);">Module Designation</th>
+                                <th style="background:var(--bg-input); border-bottom:2px solid var(--border-subtle);">Credits / Max</th>
+                                <th style="background:var(--bg-input); border-bottom:2px solid var(--border-subtle);">Score Achieved</th>
+                                <th style="background:var(--bg-input); border-bottom:2px solid var(--border-subtle);">Final Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>${studentMarks.map(m => `<tr>
+                            <td style="font-weight:600;">${m.subject}</td>
+                            <td style="font-family:monospace; color:var(--text-secondary); font-weight:500;">${m.totalMarks}</td>
+                            <td style="font-family:monospace; font-weight:600;">${m.marksObtained}</td>
+                            <td><strong style="color:var(--accent-primary);">${m.grade}</strong></td>
+                        </tr>`).join('')}</tbody>
+                    </table>
+                    
+                    <div class="result-summary">
+                        <p><span>Cumulative Score</span><strong style="font-family:monospace;">${totalObtained} / ${totalMax}</strong></p>
+                        <p><span>Performance Index</span><strong style="font-family:monospace;">${percentage.toFixed(2)}%</strong></p>
+                        <p><span>Grade Metric</span><strong style="color:var(--accent-primary);">${overallGrade}</strong></p>
+                        <p><span>System Status</span><strong style="color:${statusClass};">${statusText}</strong></p>
+                    </div>
+                    
+                    <div style="text-align:center; margin-top:48px; display:flex; gap:16px; justify-content:center;">
+                        <button class="btn btn-outline" onclick="printReportCard()"><i class="ph-bold ph-printer"></i> Execute Print</button>
+                        <button class="btn btn-primary" onclick="downloadReportCardPDF()"><i class="ph-bold ph-download-simple"></i> Compile PDF</button>
+                    </div>
+                </div>`;
+            document.getElementById('reportCardContainer').innerHTML = reportHtml;
+        }
+
+        function printReportCard() {
+            const printContent = document.getElementById('reportCard').cloneNode(true);
+            const actionButtons = printContent.querySelector('div[style*="text-align:center"]');
+            if (actionButtons) actionButtons.remove();
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>System Document Print</title><style>body{font-family:Inter,sans-serif;padding:40px;color:#111;line-height:1.5;}.report-card{max-width:800px;margin:0 auto;}.report-header{text-align:center;border-bottom:2px solid #000;padding-bottom:20px;margin-bottom:30px;}table{width:100%;border-collapse:collapse;margin-bottom:30px;}th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd;}th{background:#f9f9f9;font-size:12px;text-transform:uppercase;}.result-summary{display:flex;justify-content:space-between;padding:20px;border:2px solid #000;}p{margin:0;display:flex;flex-direction:column;}span{font-size:10px;color:#666;text-transform:uppercase;}strong{font-size:18px;margin-top:4px;}</style></head><body>' + printContent.innerHTML + '</body></html>');
+            printWindow.document.close();
+            setTimeout(() => printWindow.print(), 250);
+        }
+
+        function downloadReportCardPDF() {
+            const element = document.getElementById('reportCard').cloneNode(true);
+            const actionButtons = element.querySelector('div[style*="text-align:center"]');
+            if (actionButtons) actionButtons.remove();
+            
+            const wrapper = document.createElement('div');
+            wrapper.style.padding = '40px';
+            wrapper.style.backgroundColor = '#ffffff'; 
+            wrapper.style.color = '#0f172a'; 
+            wrapper.appendChild(element);
+            
+            const textElements = wrapper.querySelectorAll('span, p, div, td, th, h2, strong');
+            textElements.forEach(el => {
+                if(el.style.color && el.style.color.includes('var')) { el.style.color = '#000000'; }
+            });
+
+            html2pdf().set({ margin: 15, filename: `Dossier_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(wrapper).save();
+        }
+
+        // ============ EXPORT FUNCTIONS ============
+        function downloadCSV() {
+            if (!filteredStudents.length) { showMessage('No data to compile.', 'error'); return; }
+            let csv = "ID,Reg No,Name,Email,Contact,Guardian 1,Guardian 2,Emergency,Class,Course,Age,State\n";
+            filteredStudents.forEach(s => csv += `"${s.id}","${s.rollNumber || ''}","${escapeCsv(s.name)}","${escapeCsv(s.email)}","${s.phone || ''}","${s.fatherName || ''}","${s.motherName || ''}","${s.parentPhone || ''}","${s.studentClass || ''}","${escapeCsv(s.course)}","${s.age}","${s.status || 'ACTIVE'}"\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `sys_data_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            showMessage(`Compiled ${filteredStudents.length} records.`, 'success');
+        }
+
+        function exportToPDF() {
+            if (!filteredStudents.length) { showMessage('No data array to process.', 'error'); return; }
+            const pdfContent = document.createElement('div');
+            pdfContent.innerHTML = `<div style="padding:20px;font-family:Helvetica,sans-serif;color:#111;"><h1 style="color:#000;margin-bottom:5px;font-size:24px;">Master Entity Roster</h1><p style="color:#666;margin-bottom:20px;font-size:12px;border-bottom:1px solid #ccc;padding-bottom:10px;">Timestamp: ${new Date().toLocaleString()} | Size: ${filteredStudents.length}</p><table style="border-collapse:collapse;width:100%;font-size:11px;"><thead><tr style="background:#f5f5f5;text-align:left;"><th style="padding:8px;border-bottom:2px solid #000;">SYS_ID</th><th style="padding:8px;border-bottom:2px solid #000;">Entity Name</th><th style="padding:8px;border-bottom:2px solid #000;">Comm Link</th><th style="padding:8px;border-bottom:2px solid #000;">Department</th><th style="padding:8px;border-bottom:2px solid #000;">Program</th><th style="padding:8px;border-bottom:2px solid #000;">State</th></tr></thead><tbody>${filteredStudents.map(s => `<tr><td style="padding:8px;border-bottom:1px solid #eee;">${s.id}</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">${escapeHtml(s.name)}</td><td style="padding:8px;border-bottom:1px solid #eee;">${escapeHtml(s.email)}</td><td style="padding:8px;border-bottom:1px solid #eee;">${s.studentClass || '-'}</td><td style="padding:8px;border-bottom:1px solid #eee;">${escapeHtml(s.course)}</td><td style="padding:8px;border-bottom:1px solid #eee;">${s.status || 'ACTIVE'}</td></tr>`).join('')}</tbody></table></div>`;
+            html2pdf().set({ margin: 10, filename: `sys_export_${Date.now()}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(pdfContent).save();
+            showMessage(`Roster compile executed.`, 'success');
+        }
+
+        function batchPrintIDCards() {
+            if (!filteredStudents.length) { showMessage('No targets for ID generation.', 'error'); return; }
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<html><head><title>Execute ID Batch</title><style>body{font-family:Inter,sans-serif;padding:20px;background:#f9f9f9;}.id-card{width:320px;height:200px;background:#fff;border:1px solid #000;border-radius:12px;margin:10px;display:inline-flex;flex-direction:column;overflow:hidden;box-shadow:4px 4px 0 rgba(0,0,0,0.1);page-break-inside:avoid;}.header{background:#0f172a;color:#fff;padding:12px;text-align:center;font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;}.body{padding:16px;flex:1;display:flex;gap:16px;align-items:center;}.avatar{width:64px;height:64px;border-radius:8px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;}.details{flex:1;font-size:10px;line-height:1.6;}.details strong{color:#64748b;text-transform:uppercase;font-size:9px;display:inline-block;width:50px;}.name{font-size:16px;font-weight:800;color:#0f172a;margin-bottom:8px;border-bottom:2px solid #f1f5f9;padding-bottom:4px;text-transform:uppercase;}</style></head><body><div style="display:flex;flex-wrap:wrap;justify-content:center;">${filteredStudents.map(s => `<div class="id-card"><div class="header">Secure Access Protocol</div><div class="body"><div class="avatar">${getInitials(s.name)}</div><div class="details"><div class="name">${escapeHtml(s.name)}</div><div><strong>ID/REG</strong> ${s.rollNumber || s.id}</div><div><strong>DEPT</strong> ${s.studentClass || '-'}</div><div><strong>PROG</strong> ${escapeHtml(s.course)}</div></div></div></div>`).join('')}</div><script>window.onload=()=>setTimeout(()=>window.print(),500);<\/script></body></html>`);
+            printWindow.document.close();
+        }
+
+        function escapeHtml(text) { if(!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+        function escapeCsv(text) { return text ? text.replace(/"/g, '""') : ''; }
+        
+        function toggleDarkMode() { 
+            document.body.classList.toggle('dark'); 
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark); 
+            document.getElementById('darkModeToggle').innerHTML = isDark ? '<i class="ph-bold ph-sun"></i> Light Mode' : '<i class="ph-bold ph-moon"></i> Dark Mode';
+            if(dashboardChart) renderChart(); // Redraw chart for color update
+        }
+        
+        // Init - default to dark mode for enterprise look
+        if(localStorage.getItem('darkMode') === 'true' || localStorage.getItem('darkMode') === null) {
+            document.body.classList.add('dark');
+            document.getElementById('darkModeToggle').innerHTML = '<i class="ph-bold ph-sun"></i> Light Mode';
+        }
+        
+        loadStudents();
+    </script>
+</body>
+</html>
